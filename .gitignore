@@ -1,0 +1,65 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Video and image uploads (local testing)
+uploads/
+frames/
+*.mp4
+*.avi
+*.mov
+
+# Database
+*.db
+*.sqlite
+
+# AWS
+.aws/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Python
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Node
+package-lock.json
+yarn.lock
