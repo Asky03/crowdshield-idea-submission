@@ -48,13 +48,22 @@
 - Input: video file path, extraction rate (fps)
 - Output: sequence of frames with timestamps
 - Library: OpenCV (cv2.VideoCapture)
+- Current scope: pre-recorded video files
+- Future scope: RTSP/WebRTC streams from live cameras
 
 #### People Detection Module
-- Model: YOLOv8n (nano) for speed, or YOLOv8m (medium) for accuracy
-- Input: frame image (numpy array)
-- Output: bounding boxes with confidence scores
-- Post-processing: filter detections with confidence >0.5
-- Count: number of person-class detections per frame
+- Architecture: CNN-based single-stage object detection (YOLOv8) for real-time person detection
+- Model variants: YOLOv8n (nano) for speed, or YOLOv8m (medium) for accuracy
+- Input: frame image (numpy array, H×W×3)
+- Processing stages:
+  1. CNN backbone: extracts hierarchical features from input frame using convolutional layers
+  2. Detection head: predicts bounding boxes and class probabilities for detected objects
+  3. Post-processing: applies confidence thresholding (>0.5) and non-maximum suppression
+- Output: bounding boxes with confidence scores for class 'person'
+- Crowd count: computed by counting detected bounding boxes belonging to class 'person' per frame
+- Density estimation: count mapped to zone area to calculate people per square meter
+- Evaluation: currently tested on pre-recorded video datasets
+- Future: same architecture supports real-time camera feeds without modification
 
 #### Zone Mapper
 - Input: bounding box coordinates, zone polygon definitions
@@ -215,7 +224,8 @@ crowdshield-frames/
 2. Backend stores file and creates job record
 3. Python pipeline spawned with job_id
 4. For each extracted frame:
-   - Run YOLO detection
+   - Run CNN-based object detection (YOLOv8) to detect persons
+   - Count detected bounding boxes for class 'person'
    - Map detections to zones
    - Calculate risk scores
    - Store frame to S3
@@ -286,9 +296,10 @@ crowdshield-frames/
 
 ### ML Pipeline
 - Batch frame processing (process 10 frames at once)
-- Model quantization for faster inference
-- GPU acceleration if available (CUDA)
+- CNN inference optimization: model quantization for faster execution
+- GPU acceleration if available (CUDA for convolutional operations)
 - Skip frames if processing falls behind (drop to 0.5 fps)
+- Same CNN architecture supports both pre-recorded and live video input
 
 ### Backend
 - Database connection pooling (pg-pool)
